@@ -259,10 +259,12 @@ class SaveImageToMinio:
     RETURN_TYPES = ("JSON",)
 
     def main(self, images, type, username, taskId, filename):
+        results =[]
         if username == "-1" or taskId == "-1" or filename == "-1":
-            return {
+            results.add({
                 "success": False,
-            }
+            })
+            return results
         config_data = Load_minio_config()
         if config_data is not None:
             minio_client = MinioHandler()
@@ -284,10 +286,10 @@ class SaveImageToMinio:
                         file_name=file_name,
                         file_stream=buffer,
                     )
-                # print("results", results)
-                return {
+                results.append({
                     "success": True,
-                }
+                })
+                return results
             else:
                 raise Exception("Failed to connect to Minio")
         else:
