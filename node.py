@@ -18,25 +18,15 @@ from io import BytesIO
 
 
 def Load_minio_config():
-    # config_data = {
-    #     "MINIO_HOST": os.environ.get("MINIO_HOST"),
-    #     "MINIO_PORT": os.environ.get("MINIO_PORT"),
-    #     "MINIO_ENDPOINT": os.environ.get("MINIO_ENDPOINT"),
-    #     "MINIO_ACCESS_KEY": os.environ.get("MINIO_ACCESS_KEY"),
-    #     "MINIO_SECRET_KEY": os.environ.get("MINIO_SECRET_KEY"),
-    #     "COMFYINPUT_BUCKET": os.environ.get("COMFYINPUT_BUCKET"),
-    #     "COMFYOUTPUT_BUCKET": os.environ.get("COMFYOUTPUT_BUCKET"),
-    #     "MINIO_SECURE": os.environ.get("MINIO_SECURE"),
-    # }
     config_data = {
-        "MINIO_HOST": '172.16.2.16',
-        "MINIO_PORT": '9000',
-        "MINIO_ENDPOINT": 'http://172.16.2.16:9000',
-        "MINIO_ACCESS_KEY": 'STKhk4Q1q8hnVXLyz8Hz',
-        "MINIO_SECRET_KEY": 'q7qfSNafLK6qwWqPW4l4bfduu1owsS3EICrXaSuZ',
+        "MINIO_HOST": os.environ.get("MINIO_HOST"),
+        "MINIO_PORT": os.environ.get("MINIO_PORT"),
+        "MINIO_ENDPOINT": os.environ.get("MINIO_ENDPOINT"),
+        "MINIO_ACCESS_KEY": os.environ.get("MINIO_ACCESS_KEY"),
+        "MINIO_SECRET_KEY": os.environ.get("MINIO_SECRET_KEY"),
         "COMFYINPUT_BUCKET": os.environ.get("COMFYINPUT_BUCKET"),
-        "COMFYOUTPUT_BUCKET": 'yjzh-outputs',
-        "MINIO_SECURE": 'false',
+        "COMFYOUTPUT_BUCKET": os.environ.get("COMFYOUTPUT_BUCKET"),
+        "MINIO_SECURE": os.environ.get("MINIO_SECURE"),
     }
     return config_data
 
