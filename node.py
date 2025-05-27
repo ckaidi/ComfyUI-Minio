@@ -67,7 +67,7 @@ def Load_minio_config():
 #         os.environ["COMFYOUTPUT_BUCKET"] = config_data["COMFYOUTPUT_BUCKET"]
 #         os.environ["MINIO_SECURE"] = str(config_data["MINIO_SECURE"])
 
-# def save_config_to_local(config_data): 
+# def save_config_to_local(config_data):
 #     if config_data:
 #         folder = folder_paths.output_directory
 #         minio_config_path = os.path.join(folder, minio_config)
@@ -164,11 +164,12 @@ def Load_minio_config():
 #             "MINIO_SECURE": minio_secure,
 #         }
 #         save_config_to_local(config_data)
-        
+
 #         response=[]
 #         response.append({"status": status, "message": text, "data": config_data})
-        
+
 #         return response
+
 
 class LoadImageFromMinio:
 
@@ -207,15 +208,19 @@ class LoadImageFromMinio:
                 image = np.array(image).astype(np.float32) / 255.0
                 image = torch.from_numpy(image)[None,]
                 if "A" in i.getbands():
-                    mask = np.array(i.getchannel("A")).astype(np.float32) / 255.0
+                    mask = np.array(i.getchannel("A")).astype(
+                        np.float32) / 255.0
                     mask = 1.0 - torch.from_numpy(mask)
                 else:
-                    mask = torch.zeros((64, 64), dtype=torch.float32, device="cpu")
+                    mask = torch.zeros(
+                        (64, 64), dtype=torch.float32, device="cpu")
                 return (image, mask)
             else:
                 raise Exception("Failed to connect to Minio")
         else:
-            raise Exception("Please check if your Minio is configured correctly")
+            raise Exception(
+                "Please check if your Minio is configured correctly")
+
 
 class SaveImageToMinio:
 
@@ -253,13 +258,17 @@ class SaveImageToMinio:
     FUNCTION = "main"
     RETURN_TYPES = ("JSON",)
 
-    def main(self, images,type, username, taskId,filename):
+    def main(self, images, type, username, taskId, filename):
+        if username == "-1" or taskId == "-1" or filename == "-1":
+            return {
+                "success": False,
+            }
         config_data = Load_minio_config()
         if config_data is not None:
             minio_client = MinioHandler()
-            if(type =='input'):
+            if (type == 'input'):
                 bucket_name = config_data["COMFYINPUT_BUCKET"]
-            if(type =='output'):
+            if (type == 'output'):
                 bucket_name = config_data["COMFYOUTPUT_BUCKET"]
 
             if minio_client.is_minio_connected(bucket_name):
@@ -282,4 +291,5 @@ class SaveImageToMinio:
             else:
                 raise Exception("Failed to connect to Minio")
         else:
-            raise Exception("Please check if your Minio is configured correctly")
+            raise Exception(
+                "Please check if your Minio is configured correctly")
