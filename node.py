@@ -228,15 +228,23 @@ class SaveImageToMinio:
                     ["input", "output"],
                     {"default": "output"},
                 ),
-                "filename_prefix": (
+                "username": (
                     "STRING",
                     {
-                        "default": "ComfyUI",
+                        "default": "-1",
                     },
                 ),
-                "expires_hours": (
-                    "INT",
-                    {"default": 1, "min": 1, "max": 168, "step": 1},
+                "taskId": (
+                    "STRING",
+                    {
+                        "default": "-1",
+                    },
+                ),
+                "filename": (
+                    "STRING",
+                    {
+                        "default": "-1",
+                    },
                 ),
             },
         }
@@ -245,7 +253,7 @@ class SaveImageToMinio:
     FUNCTION = "main"
     RETURN_TYPES = ("JSON",)
 
-    def main(self, images,type, filename_prefix, expires_hours):
+    def main(self, images,type, username, taskId,filename):
         config_data = Load_minio_config()
         if config_data is not None:
             minio_client = MinioHandler()
@@ -255,33 +263,22 @@ class SaveImageToMinio:
                 bucket_name = config_data["COMFYOUTPUT_BUCKET"]
 
             if minio_client.is_minio_connected(bucket_name):
-                results =[]
                 for image in images:
-                    file_name = f"{filename_prefix}-{datetime.datetime.now().strftime('%Y%m%d')}-{uuid.uuid1()}.png"
+                    # file_name = f"{filename_prefix}-{datetime.datetime.now().strftime('%Y%m%d')}-{uuid.uuid1()}.png"
+                    file_name = f"{username}/{taskId}/{filename}.png"
                     i = 255. * image.cpu().numpy()
                     img = Image.fromarray(np.clip(i, 0, 255).astype(np.uint8))
-                    metadata = None
                     buffer = BytesIO()
-                    img.save(buffer, "png", pnginfo=metadata, compress_level=4)
+                    img.save(buffer, "png")
                     minio_client.put_image_by_stream(
                         bucket_name=bucket_name,
                         file_name=file_name,
                         file_stream=buffer,
                     )
-                    url = minio_client.get_file_url_by_name(
-                        bucket_name=bucket_name,
-                        file_name=file_name,
-                        expires_hours=expires_hours,
-                    )
-                    result = {
-                        "filename": file_name,
-                        "type": "output",
-                        "bucket_name": bucket_name,
-                        "url": url,
-                    }
-                    results.append(result)
                 # print("results", results)
-                return results
+                return {
+                    "success": True,
+                }
             else:
                 raise Exception("Failed to connect to Minio")
         else:
