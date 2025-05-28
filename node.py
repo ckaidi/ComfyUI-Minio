@@ -261,7 +261,7 @@ class SaveImageToMinio:
     def main(self, images, type, username, taskId, filename):
         results =[]
         if username == "-1" or taskId == "-1" or filename == "-1":
-            results.add({
+            results.append({
                 "success": False,
             })
             return results
