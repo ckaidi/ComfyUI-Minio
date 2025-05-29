@@ -315,7 +315,7 @@ class IsTextZhCN:
 
     CATEGORY = "ComfyUI-Minio"
     FUNCTION = "main"
-    RETURN_TYPES = ("bool",)
+    RETURN_TYPES = ("BOOLEAN",)
 
     def main(self, text):
         import re
