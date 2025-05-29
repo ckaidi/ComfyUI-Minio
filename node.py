@@ -343,4 +343,4 @@ class IsTextZhCN:
         # 如果中文字符比例大于50%，认为是中文
         # 如果中文字符比例等于0，认为是英文
         # 如果是混合文本，根据比例判断（这里设置阈值为0.5）
-        return chinese_ratio > 0.5
+        return (chinese_ratio > 0.5,)
