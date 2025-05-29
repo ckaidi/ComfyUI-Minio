@@ -1,3 +1,4 @@
+from math import fabs
 import folder_paths
 from .core.minio_prodogape import MinioHandler
 
@@ -295,3 +296,51 @@ class SaveImageToMinio:
         else:
             raise Exception(
                 "Please check if your Minio is configured correctly")
+
+
+class IsTextZhCN:
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "text": (
+                    "STRING",
+                    {
+                        "default": "-1",
+                    },
+                ),
+            },
+        }
+
+    CATEGORY = "ComfyUI-Minio"
+    FUNCTION = "main"
+    RETURN_TYPES = ("bool",)
+
+    def main(self, text):
+        import re
+        
+        # 检测中文字符的正则表达式
+        chinese_pattern = r'[\u4e00-\u9fff]'
+        # 检测英文字符的正则表达式
+        english_pattern = r'[a-zA-Z]'
+        
+        # 统计中文字符数量
+        chinese_chars = len(re.findall(chinese_pattern, text))
+        # 统计英文字符数量
+        english_chars = len(re.findall(english_pattern, text))
+        
+        # 总字符数（只计算中英文字符）
+        total_chars = chinese_chars + english_chars
+        
+        # 如果没有中英文字符，返回False
+        if total_chars == 0:
+            return False
+        
+        # 计算中文字符比例
+        chinese_ratio = chinese_chars / total_chars
+        
+        # 如果中文字符比例大于50%，认为是中文
+        # 如果中文字符比例等于0，认为是英文
+        # 如果是混合文本，根据比例判断（这里设置阈值为0.5）
+        return chinese_ratio > 0.5
