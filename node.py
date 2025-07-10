@@ -1,19 +1,14 @@
-from math import fabs
-import folder_paths
 from .core.minio_prodogape import MinioHandler
 
 import os
-import json
 import time
-import uuid
 import torch
-import datetime
-import requests
 import numpy as np
 from PIL import Image
 from PIL.PngImagePlugin import PngInfo
-from base64 import b64encode
 from io import BytesIO
+from openai import OpenAI
+
 
 # minio_config = "minio_config.json"
 
@@ -212,6 +207,12 @@ class OpenAIAPI:
     def INPUT_TYPES(cls):
         return {
             "required": {
+                "data": (
+                    "STRING",
+                    {
+                        "default": "-1",
+                    },
+                ),
                 "key": (
                     "STRING",
                     {
@@ -241,7 +242,17 @@ class OpenAIAPI:
 
     CATEGORY = "ComfyUI-Minio"
     FUNCTION = "main"
-    RETURN_TYPES = ("JSON",)
+    RETURN_TYPES = ("STRING",)
 
-    def main(self, key):
-        return ({},)
+    def main(self,data, key, host, path, model):
+        
+        client = OpenAI(api_key=key, base_url=host)
+
+        response = client.chat.completions.create(
+            model=model,
+            messages=data,
+            stream=False
+        )
+
+        print(response.choices[0].message.content)
+        return (response.choices[0].message.content,)
