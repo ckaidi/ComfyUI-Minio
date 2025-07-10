@@ -303,8 +303,6 @@ class OpenAIAPITranslator:
         if not is_cn(data):
             return (data,)
         client = OpenAI(api_key=key, base_url=host)
-        import json
-        messages = json.loads(data)
         response = client.chat.completions.create(
             model=model,
             messages=[
