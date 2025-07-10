@@ -247,10 +247,11 @@ class OpenAIAPI:
     def main(self,data, key, host, path, model):
         
         client = OpenAI(api_key=key, base_url=host)
-
+        import json
+        messages=json.loads(data)
         response = client.chat.completions.create(
             model=model,
-            messages=data,
+            messages=messages,
             stream=False
         )
 
