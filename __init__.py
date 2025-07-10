@@ -6,6 +6,7 @@ NODE_CLASS_MAPPINGS = {
     "Save Image To Minio": SaveImageToMinio,
     "Is Text Is CN": IsTextZhCN,
     "OpenAI API": OpenAIAPI,
+    "OpenAI API Translator": OpenAIAPITranslator,
 }
 NODE_DISPLAY_NAME_MAPPINGS = {
     # "Set Minio Config": "Set Minio Config",
@@ -13,6 +14,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "Save Image To Minio": "Save Image To Minio",
     "Is Text Is CN": "Is Text Is CN",
     "OpenAI API": "OpenAI API",
+    "OpenAI API Translator": "OpenAI API Translator",
 }
 
 __all__ = ["NODE_CLASS_MAPPINGS", "NODE_DISPLAY_NAME_MAPPINGS"]
