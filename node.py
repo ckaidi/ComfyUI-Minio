@@ -12,6 +12,34 @@ from openai import OpenAI
 
 # minio_config = "minio_config.json"
 
+def is_cn(text: str) -> bool:
+    import re
+
+    # 检测中文字符的正则表达式
+    chinese_pattern = r'[\u4e00-\u9fff]'
+    # 检测英文字符的正则表达式
+    english_pattern = r'[a-zA-Z]'
+
+    # 统计中文字符数量
+    chinese_chars = len(re.findall(chinese_pattern, text))
+    # 统计英文字符数量
+    english_chars = len(re.findall(english_pattern, text))
+
+    # 总字符数（只计算中英文字符）
+    total_chars = chinese_chars + english_chars
+
+    # 如果没有中英文字符，返回False
+    if total_chars == 0:
+        return False
+
+    # 计算中文字符比例
+    chinese_ratio = chinese_chars / total_chars
+
+    # 如果中文字符比例大于50%，认为是中文
+    # 如果中文字符比例等于0，认为是英文
+    # 如果是混合文本，根据比例判断（这里设置阈值为0.5）
+    return chinese_ratio > 0.5
+
 
 def Load_minio_config():
     config_data = {
@@ -115,7 +143,7 @@ class SaveImageToMinio:
     RETURN_TYPES = ("JSON",)
 
     def main(self, images, type, username, taskId, filename):
-        results =[]
+        results = []
         if username == "-1" or taskId == "-1" or filename == "-1":
             results.append({
                 "success": False,
@@ -173,32 +201,7 @@ class IsTextZhCN:
     RETURN_TYPES = ("BOOLEAN",)
 
     def main(self, text):
-        import re
-        
-        # 检测中文字符的正则表达式
-        chinese_pattern = r'[\u4e00-\u9fff]'
-        # 检测英文字符的正则表达式
-        english_pattern = r'[a-zA-Z]'
-        
-        # 统计中文字符数量
-        chinese_chars = len(re.findall(chinese_pattern, text))
-        # 统计英文字符数量
-        english_chars = len(re.findall(english_pattern, text))
-        
-        # 总字符数（只计算中英文字符）
-        total_chars = chinese_chars + english_chars
-        
-        # 如果没有中英文字符，返回False
-        if total_chars == 0:
-            return False
-        
-        # 计算中文字符比例
-        chinese_ratio = chinese_chars / total_chars
-        
-        # 如果中文字符比例大于50%，认为是中文
-        # 如果中文字符比例等于0，认为是英文
-        # 如果是混合文本，根据比例判断（这里设置阈值为0.5）
-        return (chinese_ratio > 0.5,)
+        return (is_cn(text),)
 
 
 class OpenAIAPI:
@@ -244,14 +247,70 @@ class OpenAIAPI:
     FUNCTION = "main"
     RETURN_TYPES = ("STRING",)
 
-    def main(self,data, key, host, path, model):
-        
+    def main(self, data, key, host, path, model):
+
         client = OpenAI(api_key=key, base_url=host)
         import json
-        messages=json.loads(data)
+        messages = json.loads(data)
         response = client.chat.completions.create(
             model=model,
             messages=messages,
+            stream=False
+        )
+
+        print(response.choices[0].message.content)
+        return (response.choices[0].message.content,)
+
+
+class OpenAIAPITranslator:
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "data": (
+                    "STRING",
+                    {
+                        "default": "-1",
+                    },
+                ),
+                "key": (
+                    "STRING",
+                    {
+                        "default": "-1",
+                    },
+                ),
+                "host": (
+                    "STRING",
+                    {
+                        "default": "-1",
+                    },
+                ),
+                "model": (
+                    "STRING",
+                    {
+                        "default": "-1",
+                    },
+                ),
+            },
+        }
+
+    CATEGORY = "ComfyUI-Minio"
+    FUNCTION = "main"
+    RETURN_TYPES = ("STRING",)
+
+    def main(self, data, key, host, model):
+        if not is_cn(data):
+            return (data,)
+        client = OpenAI(api_key=key, base_url=host)
+        import json
+        messages = json.loads(data)
+        response = client.chat.completions.create(
+            model=model,
+            messages=[
+                {"role": "system", "content": "你是一个好用的翻译助手。请将我的中文翻译成英文，将所有中文的翻译成英文。我发给你所有的话都是需要翻译的内容，你只需要回答翻译结果。翻译结果请符合英文的语言习惯。"},
+                {"role": "user", "content": data},
+            ],
             stream=False
         )
 
