@@ -13,6 +13,7 @@
 |Set Minio Config            |minio的初始化，在使用本插件前，请先使用本节点进行配置                                  |
 |Load Image From Minio       |从minio读取图片（注意：在使用前，请先使用Set Minio Config进行初始化）                  |
 |Save Image To Minio         |将图片保存到minio，支持多图的保存（注意：在使用前，请先使用Set Minio Config进行初始化）  |
+|Workflow API                |发送POST请求到工作流API端点                                                         |
 
 # 需要安装的依赖
 
@@ -23,6 +24,21 @@ pip install -r requirements.txt
 
 # 初始化步骤
 在正式使用前，请先根据下面的步骤进行初始化
+
+## 使用 Workflow API 节点
+
+Workflow API 节点允许您向工作流API端点发送POST请求。以下是使用方法：
+
+1. 将 "Workflow API" 节点添加到您的工作流中
+2. 配置以下参数：
+   - `api_url`：工作流API端点的URL（默认：http://172.16.2.35/v1/workflows/run）
+   - `api_key`：用于身份验证的API密钥
+   - `user_id`：用户标识符（默认：abc-123）
+   - `inputs`：包含工作流输入的JSON字符串（默认：{}）
+   - `response_mode`：选择 "streaming"（流式）或 "blocking"（阻塞）模式
+
+3. 将节点连接到您的工作流并运行
+4. 节点将返回API响应作为字符串
 
 ## 1. 添加节点Set Minio Config
 ![steps 1](../docs/steps-image-1.png)

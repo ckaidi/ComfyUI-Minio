@@ -13,6 +13,7 @@ This plugin is mainly based on Minio, implementing the ability to read images fr
 |Set Minio Config             |Initialization of Minio.                               |
 |Load Image From Minio        |Read images from Minio.                                |
 |Save Image To Minio          |Save images to Minio, supports saving multiple images. |
+|Workflow API                 |Send POST requests to workflow API endpoints.          |
 
 # Install
 
@@ -24,6 +25,21 @@ pip install -r requirements.txt
 
 # Note
 Before using, please initialize according to the steps below
+
+## Using Workflow API Node
+
+The Workflow API node allows you to send POST requests to workflow API endpoints. Here's how to use it:
+
+1. Add the "Workflow API" node to your workflow
+2. Configure the following parameters:
+   - `api_url`: The URL of the workflow API endpoint (default: http://172.16.2.35/v1/workflows/run)
+   - `api_key`: Your API key for authentication
+   - `user_id`: User identifier (default: abc-123)
+   - `inputs`: JSON string containing the inputs for the workflow (default: {})
+   - `response_mode`: Choose between "streaming" or "blocking" mode
+
+3. Connect the node to your workflow and run it
+4. The node will return the API response as a string
 
 ## 1. Add node:Set Minio Config
 

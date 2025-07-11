@@ -8,6 +8,8 @@ from PIL import Image
 from PIL.PngImagePlugin import PngInfo
 from io import BytesIO
 from openai import OpenAI
+import requests
+import json
 
 
 # minio_config = "minio_config.json"
@@ -228,64 +230,6 @@ class OpenAIAPI:
                         "default": "-1",
                     },
                 ),
-                "path": (
-                    "STRING",
-                    {
-                        "default": "-1",
-                    },
-                ),
-                "model": (
-                    "STRING",
-                    {
-                        "default": "-1",
-                    },
-                ),
-            },
-        }
-
-    CATEGORY = "ComfyUI-Minio"
-    FUNCTION = "main"
-    RETURN_TYPES = ("STRING",)
-
-    def main(self, data, key, host, path, model):
-
-        client = OpenAI(api_key=key, base_url=host)
-        import json
-        messages = json.loads(data)
-        response = client.chat.completions.create(
-            model=model,
-            messages=messages,
-            stream=False
-        )
-
-        print(response.choices[0].message.content)
-        return (response.choices[0].message.content,)
-
-
-class OpenAIAPITranslator:
-
-    @classmethod
-    def INPUT_TYPES(cls):
-        return {
-            "required": {
-                "data": (
-                    "STRING",
-                    {
-                        "default": "-1",
-                    },
-                ),
-                "key": (
-                    "STRING",
-                    {
-                        "default": "-1",
-                    },
-                ),
-                "host": (
-                    "STRING",
-                    {
-                        "default": "-1",
-                    },
-                ),
                 "model": (
                     "STRING",
                     {
@@ -300,17 +244,79 @@ class OpenAIAPITranslator:
     RETURN_TYPES = ("STRING",)
 
     def main(self, data, key, host, model):
-        if not is_cn(data):
-            return (data,)
+
         client = OpenAI(api_key=key, base_url=host)
+        import json
+        messages = json.loads(data)
         response = client.chat.completions.create(
             model=model,
-            messages=[
-                {"role": "system", "content": "你是一个好用的翻译助手。请将我的中文翻译成英文，将所有中文的翻译成英文。我发给你所有的话都是需要翻译的内容，你只需要回答翻译结果。翻译结果请符合英文的语言习惯。"},
-                {"role": "user", "content": data},
-            ],
+            messages=messages,
             stream=False
         )
 
         print(response.choices[0].message.content)
         return (response.choices[0].message.content,)
+
+
+class DifyCn2En:
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "data": (
+                    "STRING",
+                    {
+                        "default": "-1",
+                    },
+                ),
+            },
+        }
+
+    CATEGORY = "ComfyUI-Minio"
+    FUNCTION = "main"
+    RETURN_TYPES = ("STRING",)
+
+    def main(self, data):
+        if not is_cn(data):
+            return (data,)
+
+        try:
+            api_key = os.getenv("DIFY_CN2EN_API_KEY")
+            api_url = os.getenv("DIFY_API_URL")
+            # 准备请求头
+            headers = {
+                'Authorization': f'Bearer {api_key}',
+                'Content-Type': 'application/json'
+            }
+
+            # 准备请求体
+            try:
+                # 尝试解析inputs为JSON对象
+                inputs_json = json.loads({
+                    'text': data
+                })
+            except json.JSONDecodeError:
+                return (data,)
+
+            payload = {
+                "inputs": inputs_json,
+                "response_mode": 'blocking',
+                "user": 'comfyui'
+            }
+
+            # 发送POST请求
+            response = requests.post(api_url, headers=headers, json=payload)
+
+            # 检查响应状态
+            if response.status_code == 200:
+                return (response.json['data']['outputs']['text'],)
+            else:
+                error_message = f"请求失败，状态码: {response.status_code}, 响应: {response.text}"
+                print(error_message)
+                return (data,)
+
+        except Exception as e:
+            error_message = f"发送请求时出错: {str(e)}"
+            print(error_message)
+            return (data,)
