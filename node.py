@@ -329,7 +329,7 @@ class DifyImageDescribe:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "image": "IMAGE",
+                "images": ("IMAGE",),
             },
         }
 
@@ -337,7 +337,7 @@ class DifyImageDescribe:
     FUNCTION = "main"
     RETURN_TYPES = ("STRING",)
 
-    def main(self, image):
+    def main(self, images):
         try:
             api_key = os.getenv("DIFY_IMAGE_DESCRIBE_API_KEY")
             api_url = os.getenv("DIFY_API_URL")
@@ -346,7 +346,8 @@ class DifyImageDescribe:
                 'Authorization': f'Bearer {api_key}',
                 'Content-Type': 'application/json'
             }
-
+            
+            image=images[0]
             file_name = f"temp.png"
             i = 255. * image.cpu().numpy()
             img = Image.fromarray(np.clip(i, 0, 255).astype(np.uint8))
