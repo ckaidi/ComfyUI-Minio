@@ -370,8 +370,8 @@ class DifyImageDescribe:
 
         payload = {
             "inputs": {},
-            "response_mode": 'blocking',
-            "user": 'comfyui',
+            "response_mode": "blocking",
+            "user": "comfyui",
             "files": [
                 {
                     "transfer_method": "local_file",
@@ -385,7 +385,6 @@ class DifyImageDescribe:
         response = requests.post(
             f'{api_url}/workflows/run', headers=headers, json=payload)
 
-        print(response.text)
         json = response.json()
         print(json)
         return (json['data']['outputs']['text'],)
