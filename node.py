@@ -338,54 +338,42 @@ class DifyImageDescribe:
     RETURN_TYPES = ("STRING",)
 
     def main(self, images):
-        try:
-            api_key = os.getenv("DIFY_IMAGE_DESCRIBE_API_KEY")
-            api_url = os.getenv("DIFY_API_URL")
-            # 准备请求头
-            headers = {
-                'Authorization': f'Bearer {api_key}',
-                'Content-Type': 'application/json'
-            }
-            
-            image=images[0]
-            file_name = f"temp.png"
-            i = 255. * image.cpu().numpy()
-            img = Image.fromarray(np.clip(i, 0, 255).astype(np.uint8))
-            buffer = BytesIO()
-            img.save(buffer, "png")
-            files = {'file': (file_name, file)}
+        api_key = os.getenv("DIFY_IMAGE_DESCRIBE_API_KEY")
+        api_url = os.getenv("DIFY_API_URL")
+        # 准备请求头
+        headers = {
+            'Authorization': f'Bearer {api_key}',
+            'Content-Type': 'application/json'
+        }
+        
+        image=images[0]
+        file_name = f"temp.png"
+        i = 255. * image.cpu().numpy()
+        img = Image.fromarray(np.clip(i, 0, 255).astype(np.uint8))
+        buffer = BytesIO()
+        img.save(buffer, "png")
+        files = {'file': (file_name, file)}
 
-            # 发送POST请求
-            response = requests.post(
-                f'{api_url}/files/upload', headers=headers, files=files)
-            imageId = str(response.json()['id'])
+        # 发送POST请求
+        response = requests.post(
+            f'{api_url}/files/upload', headers=headers, files=files)
+        imageId = str(response.json()['id'])
 
-            payload = {
-                "inputs": {},
-                "response_mode": 'blocking',
-                "user": 'comfyui',
-                "files": [
-                    {
-                        "transfer_method": "local_file",
-                        "upload_file_id": imageId,
-                        "type": "image",
-                    },
-                ]
-            }
+        payload = {
+            "inputs": {},
+            "response_mode": 'blocking',
+            "user": 'comfyui',
+            "files": [
+                {
+                    "transfer_method": "local_file",
+                    "upload_file_id": imageId,
+                    "type": "image",
+                },
+            ]
+        }
 
-            # 发送POST请求
-            response = requests.post(
-                f'{api_url}workflows/run', headers=headers, json=payload)
+        # 发送POST请求
+        response = requests.post(
+            f'{api_url}workflows/run', headers=headers, json=payload)
 
-            # 检查响应状态
-            if response.status_code == 200:
-                return (response.json['data']['outputs']['text'],)
-            else:
-                error_message = f"请求失败，状态码: {response.status_code}, 响应: {response.text}"
-                print(error_message)
-                return (data,)
-
-        except Exception as e:
-            error_message = f"发送请求时出错: {str(e)}"
-            print(error_message)
-            return (data,)
+        return (response.json['data']['outputs']['text'],)
