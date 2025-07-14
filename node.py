@@ -352,8 +352,8 @@ class DifyImageDescribe:
         img = Image.fromarray(np.clip(i, 0, 255).astype(np.uint8))
         buffer = BytesIO()
         img.save(buffer, "png")
-        with open(file_name,'rb') as file:
-            files = {'file': (file_name, file)}
+        # with open(file_name,'rb') as file:
+        files = {'file': (file_name, buffer)}
 
         # 发送POST请求
         response = requests.post(
