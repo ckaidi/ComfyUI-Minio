@@ -385,4 +385,4 @@ class DifyImageDescribe:
         response = requests.post(
             f'{api_url}workflows/run', headers=headers, json=payload)
 
-        return (response.json['data']['outputs']['text'],)
+        return (response.json()['data']['outputs']['text'],)
