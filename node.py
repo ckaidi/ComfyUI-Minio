@@ -353,6 +353,9 @@ class DifyImageDescribe:
         buffer = BytesIO()
         img.save(buffer, "png")
         # with open(file_name,'rb') as file:
+        # 计算图片大小
+        buffer_size = len(buffer.getvalue()) / (1024 * 1024)  # 转换为MB
+        print(f"图片大小: {buffer_size:.2f}MB")
         files = {
             'file': (file_name, buffer.getvalue(), 'image/png'),
         }
