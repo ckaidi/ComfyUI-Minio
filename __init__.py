@@ -7,6 +7,7 @@ NODE_CLASS_MAPPINGS = {
     "Is Text Is CN": IsTextZhCN,
     "OpenAI API": OpenAIAPI,
     "Dify Cn TO En": DifyCn2En,
+    "Dify Image Describe": DifyImageDescribe,
 }
 NODE_DISPLAY_NAME_MAPPINGS = {
     # "Set Minio Config": "Set Minio Config",
@@ -15,6 +16,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "Is Text Is CN": "Is Text Is CN",
     "OpenAI API": "OpenAI API",
     "Dify Cn TO En": "Dify Cn TO En",
+    "Dify Image Describe": "Dify Image Describe",
 }
 
 __all__ = ["NODE_CLASS_MAPPINGS", "NODE_DISPLAY_NAME_MAPPINGS"]
