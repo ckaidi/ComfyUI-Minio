@@ -354,7 +354,7 @@ class DifyImageDescribe:
         img.save(buffer, "png")
         # with open(file_name,'rb') as file:
         files = {
-            'file': (file_name, buffer),
+            'file': (file_name, buffer, 'image/png'),
             'user': 'comfyui'
         }
 
