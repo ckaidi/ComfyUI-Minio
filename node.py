@@ -355,14 +355,15 @@ class DifyImageDescribe:
         # with open(file_name,'rb') as file:
         files = {
             'file': (file_name, buffer, 'image/png'),
-            'user': 'comfyui'
         }
 
         # 发送POST请求
         response = requests.post(
             f'{api_url}/files/upload', headers={
                 'Authorization': f'Bearer {api_key}',
-            }, files=files)
+            }, files=files, data={
+                'user': 'comfyui'
+            })
         json = response.json()
         print(json)
         imageId = str(json['id'])
