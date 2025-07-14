@@ -383,8 +383,9 @@ class DifyImageDescribe:
 
         # 发送POST请求
         response = requests.post(
-            f'{api_url}workflows/run', headers=headers, json=payload)
+            f'{api_url}/workflows/run', headers=headers, json=payload)
 
+        print(response.text)
         json = response.json()
         print(json)
         return (json['data']['outputs']['text'],)
