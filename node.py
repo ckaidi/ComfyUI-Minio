@@ -293,9 +293,9 @@ class DifyCn2En:
             # 准备请求体
             try:
                 # 尝试解析inputs为JSON对象
-                inputs_json = json.loads({
+                inputs_json = {
                     'text': data
-                })
+                }
             except json.JSONDecodeError:
                 return (data,)
 
@@ -311,7 +311,7 @@ class DifyCn2En:
 
             # 检查响应状态
             if response.status_code == 200:
-                return (response.json['data']['outputs']['text'],)
+                return (response.json()['data']['outputs']['text'],)
             else:
                 error_message = f"请求失败，状态码: {response.status_code}, 响应: {response.text}"
                 print(error_message)
