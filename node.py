@@ -358,7 +358,9 @@ class DifyImageDescribe:
         # 发送POST请求
         response = requests.post(
             f'{api_url}/files/upload', headers=headers, files=files)
-        imageId = str(response.json()['id'])
+        json=response.json()
+        print(json)
+        imageId = str(json['id'])
 
         payload = {
             "inputs": {},
