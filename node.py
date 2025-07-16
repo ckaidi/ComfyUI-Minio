@@ -391,3 +391,73 @@ class DifyImageDescribe:
         json = response.json()
         print(json)
         return (json['data']['outputs']['text'],)
+
+
+class DifyImageDescribeEn:
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "images": ("IMAGE",),
+            },
+        }
+
+    CATEGORY = "ComfyUI-Minio"
+    FUNCTION = "main"
+    RETURN_TYPES = ("STRING",)
+
+    def main(self, images):
+        api_key = os.getenv("DIFY_IMAGE_DESCRIBE_EN_API_KEY")
+        api_url = os.getenv("DIFY_API_URL")
+        # 准备请求头
+        headers = {
+            'Authorization': f'Bearer {api_key}',
+            'Content-Type': 'application/json'
+        }
+
+        image = images[0]
+        file_name = f"temp.png"
+        i = 255. * image.cpu().numpy()
+        img = Image.fromarray(np.clip(i, 0, 255).astype(np.uint8))
+        buffer = BytesIO()
+        img.save(buffer, "png")
+        # with open(file_name,'rb') as file:
+        # 计算图片大小
+        buffer_size = len(buffer.getvalue()) / (1024 * 1024)  # 转换为MB
+        print(f"图片大小: {buffer_size:.2f}MB")
+        files = {
+            'file': (file_name, buffer.getvalue(), 'image/png'),
+        }
+
+        # 发送POST请求
+        response = requests.post(
+            f'{api_url}/files/upload', headers={
+                'Authorization': f'Bearer {api_key}',
+            }, files=files, data={
+                'user': 'comfyui'
+            })
+        json = response.json()
+        print(json)
+        imageId = str(json['id'])
+
+        payload = {
+            "inputs": {},
+            "response_mode": "blocking",
+            "user": "comfyui",
+            "files": [
+                {
+                    "transfer_method": "local_file",
+                    "upload_file_id": imageId,
+                    "type": "image",
+                },
+            ]
+        }
+
+        # 发送POST请求
+        response = requests.post(
+            f'{api_url}/workflows/run', headers=headers, json=payload)
+
+        json = response.json()
+        print(json)
+        return (json['data']['outputs']['text'],)
