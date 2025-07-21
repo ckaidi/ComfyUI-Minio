@@ -282,11 +282,9 @@ class DifyCn2En:
             return (data,)
 
         try:
-            api_key = os.getenv("DIFY_CN2EN_API_KEY")
             api_url = os.getenv("DIFY_API_URL")
             # 准备请求头
             headers = {
-                'Authorization': f'Bearer {api_key}',
                 'Content-Type': 'application/json'
             }
 
@@ -307,7 +305,7 @@ class DifyCn2En:
 
             # 发送POST请求
             response = requests.post(
-                f'{api_url}/workflows/run', headers=headers, json=payload)
+                f'{api_url}/cn2en/workflows/run', headers=headers, json=payload)
 
             # 检查响应状态
             if response.status_code == 200:
@@ -338,11 +336,9 @@ class DifyImageDescribe:
     RETURN_TYPES = ("STRING",)
 
     def main(self, images):
-        api_key = os.getenv("DIFY_IMAGE_DESCRIBE_API_KEY")
         api_url = os.getenv("DIFY_API_URL")
         # 准备请求头
         headers = {
-            'Authorization': f'Bearer {api_key}',
             'Content-Type': 'application/json'
         }
 
@@ -362,9 +358,7 @@ class DifyImageDescribe:
 
         # 发送POST请求
         response = requests.post(
-            f'{api_url}/files/upload', headers={
-                'Authorization': f'Bearer {api_key}',
-            }, files=files, data={
+            f'{api_url}/describe2cn/files/upload', files=files, data={
                 'user': 'comfyui'
             })
         json = response.json()
@@ -386,7 +380,7 @@ class DifyImageDescribe:
 
         # 发送POST请求
         response = requests.post(
-            f'{api_url}/workflows/run', headers=headers, json=payload)
+            f'{api_url}/describe2cn/workflows/run', headers=headers, json=payload)
 
         json = response.json()
         print(json)
@@ -408,11 +402,9 @@ class DifyImageDescribeEn:
     RETURN_TYPES = ("STRING",)
 
     def main(self, images):
-        api_key = os.getenv("DIFY_IMAGE_DESCRIBE_EN_API_KEY")
         api_url = os.getenv("DIFY_API_URL")
         # 准备请求头
         headers = {
-            'Authorization': f'Bearer {api_key}',
             'Content-Type': 'application/json'
         }
 
@@ -432,9 +424,7 @@ class DifyImageDescribeEn:
 
         # 发送POST请求
         response = requests.post(
-            f'{api_url}/files/upload', headers={
-                'Authorization': f'Bearer {api_key}',
-            }, files=files, data={
+            f'{api_url}/describe2en/files/upload', files=files, data={
                 'user': 'comfyui'
             })
         json = response.json()
@@ -456,7 +446,7 @@ class DifyImageDescribeEn:
 
         # 发送POST请求
         response = requests.post(
-            f'{api_url}/workflows/run', headers=headers, json=payload)
+            f'{api_url}/describe2en/workflows/run', headers=headers, json=payload)
 
         json = response.json()
         print(json)
