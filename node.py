@@ -305,7 +305,7 @@ class DifyCn2En:
 
             # 发送POST请求
             response = requests.post(
-                f'{api_url}/cn2en/workflows/run', headers=headers, json=payload)
+                f'{api_url}/cn2en/v1/workflows/run', headers=headers, json=payload)
 
             # 检查响应状态
             if response.status_code == 200:
@@ -358,7 +358,7 @@ class DifyImageDescribe:
 
         # 发送POST请求
         response = requests.post(
-            f'{api_url}/describe2cn/files/upload', files=files, data={
+            f'{api_url}/describe2cn/v1/files/upload', files=files, data={
                 'user': 'comfyui'
             })
         json = response.json()
@@ -380,7 +380,7 @@ class DifyImageDescribe:
 
         # 发送POST请求
         response = requests.post(
-            f'{api_url}/describe2cn/workflows/run', headers=headers, json=payload)
+            f'{api_url}/describe2cn/v1/workflows/run', headers=headers, json=payload)
 
         json = response.json()
         print(json)
@@ -424,7 +424,7 @@ class DifyImageDescribeEn:
 
         # 发送POST请求
         response = requests.post(
-            f'{api_url}/describe2en/files/upload', files=files, data={
+            f'{api_url}/describe2en/v1/files/upload', files=files, data={
                 'user': 'comfyui'
             })
         json = response.json()
@@ -446,7 +446,7 @@ class DifyImageDescribeEn:
 
         # 发送POST请求
         response = requests.post(
-            f'{api_url}/describe2en/workflows/run', headers=headers, json=payload)
+            f'{api_url}/describe2en/v1/workflows/run', headers=headers, json=payload)
 
         json = response.json()
         print(json)
