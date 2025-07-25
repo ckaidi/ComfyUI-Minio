@@ -9,6 +9,7 @@ NODE_CLASS_MAPPINGS = {
     "Dify Cn TO En": DifyCn2En,
     "Dify Image Describe": DifyImageDescribe,
     "Dify Image Describe En": DifyImageDescribeEn,
+    "Upload Image To Nocodb": UploadImageToNocodb,
 }
 NODE_DISPLAY_NAME_MAPPINGS = {
     # "Set Minio Config": "Set Minio Config",
@@ -19,6 +20,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "Dify Cn TO En": "Dify Cn TO En",
     "Dify Image Describe": "Dify Image Describe",
     "Dify Image Describe En": "Dify Image Describe En",
+    "Upload Image To Nocodb": "Upload Image To Nocodb",
 }
 
 __all__ = ["NODE_CLASS_MAPPINGS", "NODE_DISPLAY_NAME_MAPPINGS"]
